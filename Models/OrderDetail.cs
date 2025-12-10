@@ -26,7 +26,7 @@ namespace OrderManagementRazor.Models
         [Display(Name = "Unit Price")]
         public decimal UnitPrice { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column("Subtotal", TypeName = "decimal(18,2)")]
         [Display(Name = "Subtotal")]
         public decimal LineTotal { get; set; }
 
