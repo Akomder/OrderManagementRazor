@@ -1,0 +1,82 @@
+@page
+@model OrderManagementRazor.Pages.Orders.EditModel
+@{
+    ViewData["Title"] = "Edit Order";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Edit Order</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" asp-for="Order.OrderId" />
+                <input type="hidden" asp-for="Order.OrderNumber" />
+                <input type="hidden" asp-for="Order.TotalAmount" />
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Order Number</label>
+                        <input value="@Model.Order.OrderNumber" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.OrderDate" class="form-label"></label>
+                        <input asp-for="Order.OrderDate" class="form-control" type="date" />
+                        <span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.CustomerId" class="form-label"></label>
+                        <select asp-for="Order.CustomerId" asp-items="Model.Customers" class="form-select">
+                            <option value="">-- Select Customer --</option>
+                        </select>
+                        <span asp-validation-for="Order.CustomerId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.AgentId" class="form-label"></label>
+                        <select asp-for="Order.AgentId" asp-items="Model.Agents" class="form-select">
+                            <option value="">-- Select Agent (Optional) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.Status" class="form-label"></label>
+                        <select asp-for="Order.Status" class="form-select">
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.Notes" class="form-label"></label>
+                        <input asp-for="Order.Notes" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>Note:</strong> To modify order items, please delete and create a new order.
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,98 @@
+@page
+@model OrderManagementRazor.Pages.Orders.DetailsModel
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Order Details</h3>
+            <a asp-page="Print" asp-route-id="@Model.Order.OrderId" class="btn btn-success" target="_blank">
+                <i class="bi bi-printer"></i> Print Order
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Order Information</h5>
+                    <dl class="row">
+                        <dt class="col-sm-4">Order Number</dt>
+                        <dd class="col-sm-8"><strong>@Model.Order.OrderNumber</strong></dd>
+
+                        <dt class="col-sm-4">Order Date</dt>
+                        <dd class="col-sm-8">@Model.Order.OrderDate.ToString("MMMM dd, yyyy")</dd>
+
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.Order.Status == "Completed" ? "bg-success" : Model.Order.Status == "Pending" ? "bg-warning" : "bg-info")">
+                                @Model.Order.Status
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Notes</dt>
+                        <dd class="col-sm-8">@Model.Order.Notes</dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Customer & Agent</h5>
+                    <dl class="row">
+                        <dt class="col-sm-4">Customer</dt>
+                        <dd class="col-sm-8">@Model.Order.Customer?.CustomerName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.Order.Customer?.Email</dd>
+
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">@Model.Order.Customer?.Phone</dd>
+
+                        <dt class="col-sm-4">Agent</dt>
+                        <dd class="col-sm-8">@(Model.Order.Agent?.AgentName ?? "N/A")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <hr />
+
+            <h5 class="mb-3">Order Items</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Order.OrderDetails)
+                        {
+                            <tr>
+                                <td>@item.Product?.ProductName</td>
+                                <td class="text-end">@item.UnitPrice.ToString("C")</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end"><strong>@item.LineTotal.ToString("C")</strong></td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-dark">
+                            <td colspan="3" class="text-end"><strong>Total Amount:</strong></td>
+                            <td class="text-end"><strong>@Model.Order.TotalAmount.ToString("C")</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+                <div>
+                    <a asp-page="Edit" asp-route-id="@Model.Order.OrderId" class="btn btn-primary">Edit Order</a>
+                    <a asp-page="Delete" asp-route-id="@Model.Order.OrderId" class="btn btn-danger">Delete Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

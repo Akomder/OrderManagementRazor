@@ -1,0 +1,186 @@
+@page
+@model OrderManagementRazor.Pages.Orders.PrintModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Order #@Model.Order.OrderNumber</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 14px;
+        }
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+        }
+        .invoice-header h1 {
+            margin: 0;
+            color: #333;
+        }
+        .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .info-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            width: 48%;
+        }
+        .info-box h3 {
+            background-color: #f0f0f0;
+            padding: 8px;
+            margin: 0 0 10px 0;
+        }
+        .info-box p {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .total-section {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .total-amount {
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        @@media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px, cursor: pointer;">
+            Print Order
+        </button>
+        <button onclick="window.close()" style="padding: 10px 20px; font-size: 16px, cursor: pointer; margin-left: 10px;">
+            Close
+        </button>
+    </div>
+
+    <div class="company-info">
+        <h2>OrderManagement System</h2>
+        <p>123 Business Street, City, Country</p>
+        <p>Phone: (123) 456-7890 | Email: info@ordermanagement.com</p>
+    </div>
+
+    <div class="invoice-header">
+        <h1>ORDER INVOICE</h1>
+        <p>Order Number: <strong>@Model.Order.OrderNumber</strong></p>
+        <p>Order Date: <strong>@Model.Order.OrderDate.ToString("MMMM dd, yyyy")</strong></p>
+    </div>
+
+    <div class="info-section">
+        <div class="info-box">
+            <h3>Customer Information</h3>
+            <p><strong>Name:</strong> @Model.Order.Customer?.CustomerName</p>
+            <p><strong>Email:</strong> @Model.Order.Customer?.Email</p>
+            <p><strong>Phone:</strong> @Model.Order.Customer?.Phone</p>
+            <p><strong>Address:</strong> @Model.Order.Customer?.Address</p>
+        </div>
+
+        <div class="info-box">
+            <h3>Order Information</h3>
+            <p><strong>Status:</strong> @Model.Order.Status</p>
+            <p><strong>Agent:</strong> @(Model.Order.Agent?.AgentName ?? "N/A")</p>
+            @if (!string.IsNullOrEmpty(Model.Order.Notes))
+            {
+                <p><strong>Notes:</strong> @Model.Order.Notes</p>
+            }
+        </div>
+    </div>
+
+    <h3>Order Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;">#</th>
+                <th style="width: 50%;">Product</th>
+                <th style="width: 15%;" class="text-right">Unit Price</th>
+                <th style="width: 10%;" class="text-center">Qty</th>
+                <th style="width: 15%;" class="text-right">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int itemNumber = 1;
+            }
+            @foreach (var item in Model.Order.OrderDetails)
+            {
+                <tr>
+                    <td>@itemNumber</td>
+                    <td>@item.Product?.ProductName</td>
+                    <td class="text-right">@item.UnitPrice.ToString("C")</td>
+                    <td class="text-center">@item.Quantity</td>
+                    <td class="text-right"><strong>@item.LineTotal.ToString("C")</strong></td>
+                </tr>
+                itemNumber++;
+            }
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <div class="total-amount">
+            <strong>TOTAL AMOUNT: @Model.Order.TotalAmount.ToString("C")</strong>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for your business!</p>
+        <p>This is a computer-generated invoice and does not require a signature.</p>
+        <p>Printed on: @DateTime.Now.ToString("MMMM dd, yyyy HH:mm")</p>
+    </div>
+
+    <script>
+        // Auto-print when page loads (optional)
+        // window.onload = function() { window.print(); }
+    </script>
+</body>
+</html>

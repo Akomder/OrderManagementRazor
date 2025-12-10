@@ -1,0 +1,177 @@
+@page
+@model OrderManagementRazor.Pages.Orders.CreateModel
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Create New Order</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" id="orderForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.OrderNumber" class="form-label"></label>
+                        <input asp-for="Order.OrderNumber" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.OrderDate" class="form-label"></label>
+                        <input asp-for="Order.OrderDate" class="form-control" type="date" />
+                        <span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.CustomerId" class="form-label"></label>
+                        <select asp-for="Order.CustomerId" asp-items="Model.Customers" class="form-select">
+                            <option value="">-- Select Customer --</option>
+                        </select>
+                        <span asp-validation-for="Order.CustomerId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.AgentId" class="form-label"></label>
+                        <select asp-for="Order.AgentId" asp-items="Model.Agents" class="form-select">
+                            <option value="">-- Select Agent (Optional) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.Status" class="form-label"></label>
+                        <select asp-for="Order.Status" class="form-select">
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Order.Notes" class="form-label"></label>
+                        <input asp-for="Order.Notes" class="form-control" />
+                    </div>
+                </div>
+
+                <hr />
+
+                <h4 class="mb-3">Order Items</h4>
+                
+                <div id="orderItems">
+                    <!-- Order items will be added here dynamically -->
+                </div>
+
+                <button type="button" class="btn btn-secondary mb-3" onclick="addOrderItem()">
+                    <i class="bi bi-plus"></i> Add Product
+                </button>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="text-end">Total: <span id="grandTotal">$0.00</span></h5>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between">
+                    <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+                    <button type="submit" class="btn btn-primary">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        let itemCount = 0;
+        const products = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Products.Select(p => new { p.ProductId, p.ProductName, p.UnitPrice, p.StockQuantity })));
+
+        function addOrderItem() {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'row mb-3 order-item';
+            itemDiv.id = `item-${itemCount}`;
+            itemDiv.innerHTML = `
+                <div class="col-md-5">
+                    <label class="form-label">Product</label>
+                    <select name="productIds" class="form-select product-select" onchange="updatePrice(${itemCount})" required>
+                        <option value="">-- Select Product --</option>
+                        ${products.map(p => `<option value="${p.productId}" data-price="${p.unitPrice}" data-stock="${p.stockQuantity}">${p.productName} (Stock: ${p.stockQuantity})</option>`).join('')}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" name="quantities" class="form-control quantity-input" value="1" min="1" onchange="calculateLineTotal(${itemCount})" required />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Unit Price</label>
+                    <input type="number" step="0.01" class="form-control unit-price" readonly value="0" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Subtotal</label>
+                    <input type="text" class="form-control line-total" readonly value="$0.00" />
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-danger w-100" onclick="removeItem(${itemCount})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+            document.getElementById('orderItems').appendChild(itemDiv);
+            itemCount++;
+        }
+
+        function updatePrice(index) {
+            const item = document.getElementById(`item-${index}`);
+            const select = item.querySelector('.product-select');
+            const selectedOption = select.options[select.selectedIndex];
+            const unitPrice = selectedOption.getAttribute('data-price') || 0;
+            
+            item.querySelector('.unit-price').value = unitPrice;
+            calculateLineTotal(index);
+        }
+
+        function calculateLineTotal(index) {
+            const item = document.getElementById(`item-${index}`);
+            const quantity = parseFloat(item.querySelector('.quantity-input').value) || 0;
+            const unitPrice = parseFloat(item.querySelector('.unit-price').value) || 0;
+            
+            const lineTotal = quantity * unitPrice;
+            item.querySelector('.line-total').value = `$${lineTotal.toFixed(2)}`;
+            
+            updateGrandTotal();
+        }
+
+        function updateGrandTotal() {
+            let total = 0;
+            document.querySelectorAll('.line-total').forEach(input => {
+                const value = input.value.replace('$', '').replace(',', '');
+                total += parseFloat(value) || 0;
+            });
+            document.getElementById('grandTotal').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function removeItem(index) {
+            const item = document.getElementById(`item-${index}`);
+            if (item) {
+                item.remove();
+                updateGrandTotal();
+            }
+        }
+
+        // Add first item on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            addOrderItem();
+        });
+    </script>
+}

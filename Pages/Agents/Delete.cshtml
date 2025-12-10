@@ -1,0 +1,47 @@
+@page
+@model OrderManagementRazor.Pages.Agents.DeleteModel
+@{
+    ViewData["Title"] = "Delete Agent";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3>Delete Agent</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Are you sure you want to delete this agent?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Agent Name</dt>
+                        <dd class="col-sm-9">@Model.Agent.AgentName</dd>
+
+                        <dt class="col-sm-3">Email</dt>
+                        <dd class="col-sm-9">@Model.Agent.Email</dd>
+
+                        <dt class="col-sm-3">Phone</dt>
+                        <dd class="col-sm-9">@Model.Agent.Phone</dd>
+
+                        <dt class="col-sm-3">Address</dt>
+                        <dd class="col-sm-9">@Model.Agent.Address</dd>
+
+                        <dt class="col-sm-3">Company</dt>
+                        <dd class="col-sm-9">@Model.Agent.Company</dd>
+                    </dl>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Agent.AgentId" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+                            <button type="submit" class="btn btn-danger">Delete Agent</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

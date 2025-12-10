@@ -1,0 +1,86 @@
+@page
+@model OrderManagementRazor.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </h3>
+                
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Login Failed</strong>
+                        <div asp-validation-summary="All" class="mb-0 mt-2"></div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="LoginInput.Username" class="form-label">
+                            <i class="bi bi-person"></i> Username
+                        </label>
+                        <input asp-for="LoginInput.Username" 
+                               class="form-control" 
+                               placeholder="Enter your username"
+                               autocomplete="username" 
+                               autofocus />
+                        <span asp-validation-for="LoginInput.Username" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="LoginInput.Password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <input asp-for="LoginInput.Password" 
+                               class="form-control" 
+                               placeholder="Enter your password"
+                               autocomplete="current-password" />
+                        <span asp-validation-for="LoginInput.Password" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input asp-for="LoginInput.RememberMe" class="form-check-input" />
+                        <label asp-for="LoginInput.RememberMe" class="form-check-label">
+                            Keep me signed in
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </button>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-2">
+                        <small class="text-muted">Don't have an account?</small>
+                    </p>
+                    <a asp-page="Register" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-person-plus"></i> Create New Account
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                <i class="bi bi-shield-check"></i> Your credentials are secure and encrypted
+            </small>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,211 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <div class="container-fluid">
+        <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Products</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalProducts</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-box fs-2 text-primary"></i>
+                            </div>
+                        </div>
+                        <a asp-page="/Products/Index" class="btn btn-sm btn-primary mt-2 w-100">View Products</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Customers</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCustomers</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-people fs-2 text-success"></i>
+                            </div>
+                        </div>
+                        <a asp-page="/Customers/Index" class="btn btn-sm btn-success mt-2 w-100">View Customers</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Orders</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalOrders</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-receipt fs-2 text-info"></i>
+                            </div>
+                        </div>
+                        <a asp-page="/Orders/Index" class="btn btn-sm btn-info mt-2 w-100">View Orders</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Revenue</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalRevenue.ToString("C")</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-currency-dollar fs-2 text-warning"></i>
+                            </div>
+                        </div>
+                        <a asp-page="/Reports/BestItems" class="btn btn-sm btn-warning mt-2 w-100">View Reports</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-clock-history"></i> Recent Orders</h6>
+                        <a asp-page="/Orders/Create" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-circle"></i> New Order
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.RecentOrders.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Order Number</th>
+                                            <th>Date</th>
+                                            <th>Customer</th>
+                                            <th>Agent</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model.RecentOrders)
+                                        {
+                                            <tr>
+                                                <td><strong>@order.OrderNumber</strong></td>
+                                                <td>@order.OrderDate.ToString("MM/dd/yyyy")</td>
+                                                <td>@order.Customer?.CustomerName</td>
+                                                <td>@(order.Agent?.AgentName ?? "N/A")</td>
+                                                <td>@order.TotalAmount.ToString("C")</td>
+                                                <td>
+                                                    <span class="badge @(order.Status == "Completed" ? "bg-success" : order.Status == "Pending" ? "bg-warning" : "bg-info")">
+                                                        @order.Status
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a asp-page="/Orders/Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">View</a>
+                                                    <a asp-page="/Orders/Print" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-success" target="_blank">Print</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> No orders yet. <a asp-page="/Orders/Create">Create your first order</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-lightning"></i> Quick Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a asp-page="/Orders/Create" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-plus-circle"></i> Create Order
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a asp-page="/Products/Create" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-box"></i> Add Product
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a asp-page="/Customers/Create" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-person-plus"></i> Add Customer
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a asp-page="/Agents/Create" class="btn btn-outline-warning w-100">
+                                    <i class="bi bi-person-badge"></i> Add Agent
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <h1 class="display-4">Welcome to OrderManagement System</h1>
+        <p class="lead">A comprehensive solution for managing products, customers, agents, and orders.</p>
+        <hr class="my-4">
+        <p>Please register or login to access the system.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a class="btn btn-success btn-lg" asp-page="/Account/Register" role="button">
+                <i class="bi bi-person-plus"></i> Register
+            </a>
+            <a class="btn btn-primary btn-lg" asp-page="/Account/Login" role="button">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+        </div>
+    </div>
+}
+
+<style>
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+</style>

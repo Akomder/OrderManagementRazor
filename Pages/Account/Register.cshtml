@@ -1,0 +1,116 @@
+@page
+@model OrderManagementRazor.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">
+                    <i class="bi bi-person-plus"></i> Create Account
+                </h3>
+                
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Registration Failed</strong>
+                        <div asp-validation-summary="All" class="mb-0 mt-2"></div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="RegisterInput.Username" class="form-label">
+                            <i class="bi bi-person"></i> Username
+                        </label>
+                        <input asp-for="RegisterInput.Username" 
+                               class="form-control" 
+                               placeholder="Choose a username"
+                               autocomplete="username" 
+                               autofocus />
+                        <span asp-validation-for="RegisterInput.Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RegisterInput.FullName" class="form-label">
+                            <i class="bi bi-person-badge"></i> Full Name
+                        </label>
+                        <input asp-for="RegisterInput.FullName" 
+                               class="form-control" 
+                               placeholder="Enter your full name"
+                               autocomplete="name" />
+                        <span asp-validation-for="RegisterInput.FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RegisterInput.Email" class="form-label">
+                            <i class="bi bi-envelope"></i> Email
+                        </label>
+                        <input asp-for="RegisterInput.Email" 
+                               class="form-control" 
+                               placeholder="Enter your email address"
+                               autocomplete="email" 
+                               type="email" />
+                        <span asp-validation-for="RegisterInput.Email" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="RegisterInput.Password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <input asp-for="RegisterInput.Password" 
+                               class="form-control" 
+                               placeholder="Create a strong password"
+                               autocomplete="new-password" />
+                        <span asp-validation-for="RegisterInput.Password" class="text-danger small"></span>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle"></i> Password must be at least 6 characters long.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RegisterInput.ConfirmPassword" class="form-label">
+                            <i class="bi bi-lock-fill"></i> Confirm Password
+                        </label>
+                        <input asp-for="RegisterInput.ConfirmPassword" 
+                               class="form-control" 
+                               placeholder="Re-enter your password"
+                               autocomplete="new-password" />
+                        <span asp-validation-for="RegisterInput.ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-person-plus"></i> Create Account
+                    </button>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-2">
+                        <small class="text-muted">Already have an account?</small>
+                    </p>
+                    <a asp-page="Login" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-box-arrow-in-right"></i> Login Here
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                <i class="bi bi-shield-check"></i> Your information is secure and protected
+            </small>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
